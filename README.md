@@ -66,15 +66,6 @@
   <img src="images/5.문제출제.png" alt="문제 제작 폼" width="800">
 </p>
 
-## 기술 스택
-
-- **Backend**: Flask, SQLAlchemy, Flask-Migrate
-- **Database**: SQLite (`instance/dimeoj.db`)
-- **Frontend**: HTML5 / CSS3 / Vanilla JS, highlight.js
-- **AI**: OpenAI Python SDK (`gpt-4o-mini`)
-- **Server**: Gunicorn
-- **Security**: AES-256-CBC, PBKDF2
-
 ## 설치
 
 ```bash
@@ -154,17 +145,8 @@ python app.py
 | 키 | 설명 | 기본값 |
 |---|---|---|
 | `OPENAI_API_KEY` | AI 코딩 선생님용 OpenAI API 키 | (필수) |
-| `SECRET_KEY` | Flask 세션 서명 키 | `dev_key_change_in_production` |
-| `DATABASE_URL` | SQLAlchemy DB URI | `sqlite:///dimeoj.db` |
-| `PYTHON_BIN` | 채점용 Python 실행 파일 | `/usr/bin/python3` |
-| `SANDBOX_DIR` | 채점 샌드박스 경로 | `./sandbox` |
 
 > ⚠️ `.env` 파일은 `.gitignore`에 등록되어 있어 커밋되지 않습니다. 절대 API 키를 저장소에 올리지 마세요.
-
-## 비밀번호 규칙
-
-- 최소 8자 이상
-- 영문, 숫자, 특수문자 포함
 
 ## 라이선스 및 사용 범위
 
