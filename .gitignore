@@ -1,0 +1,30 @@
+# Secrets / local config
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+venv/
+myenv/
+*.egg-info/
+
+# Flask / DB / runtime
+instance/
+*.db
+*.sqlite
+*.sqlite3
+server.pid
+server.log
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Build artifacts
+sandbox/
+doj.zip
+db_dump.txt

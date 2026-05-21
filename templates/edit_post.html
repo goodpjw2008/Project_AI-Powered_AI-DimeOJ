@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="board-write-container">
+  <h2 class="board-title">게시글 수정</h2>
+  <form method="post" class="board-write-form">
+    <div class="form-group">
+      <label for="title">제목</label>
+      <input type="text" id="title" name="title" value="{{ post.title }}" required>
+    </div>
+    <div class="form-group">
+      <label for="content">내용</label>
+      <textarea id="content" name="content" rows="12" required>{{ post.content }}</textarea>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="board-btn">저장</button>
+      <a href="{{ url_for('post_detail', post_id=post.id) }}" class="board-btn board-btn-cancel">취소</a>
+    </div>
+  </form>
+</div>
+{% endblock %} 

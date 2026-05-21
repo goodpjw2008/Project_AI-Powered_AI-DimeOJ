@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="problem-container">
+  <div class="problem-card">
+    <h2>문제 제작</h2>
+    <form method="post">
+      <label for="title">제목</label>
+      <input type="text" id="title" name="title" required>
+
+      <label for="description">지문 (description)</label>
+      <textarea id="description" name="description" rows="5" required>{{ problem.description if problem else '' }}</textarea>
+
+      <label for="input_spec">입력 설명 (input specification)</label>
+      <textarea id="input_spec" name="input_spec" rows="3">{{ problem.input_spec if problem else '' }}</textarea>
+
+      <label for="output_spec">출력 설명 (output specification)</label>
+      <textarea id="output_spec" name="output_spec" rows="3">{{ problem.output_spec if problem else '' }}</textarea>
+      
+      <div class="problem-row">
+        <div>
+          <label for="time_limit">시간 제한(초)</label>
+          <input type="number" id="time_limit" name="time_limit" value="1" min="1" required>
+        </div>
+        <div>
+          <label for="memory_limit">메모리 제한(MB)</label>
+          <input type="number" id="memory_limit" name="memory_limit" value="128" min="16" required>
+        </div>
+      </div>
+
+      <label for="checker">Checker 코드 (Python)</label>
+      <textarea id="checker" name="checker" rows="5"></textarea>
+
+      <label for="sample_input">예제 입력 (sample input)</label>
+      <textarea id="sample_input" name="sample_input" rows="3"></textarea>
+      
+      <label for="sample_output">예제 출력 (sample output)</label>
+      <textarea id="sample_output" name="sample_output" rows="3"></textarea>
+      <hr>
+      <button type="submit" class="problem-btn">문제 생성</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

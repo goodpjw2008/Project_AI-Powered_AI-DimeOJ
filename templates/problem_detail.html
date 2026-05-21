@@ -1,0 +1,487 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Add highlight.js CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<!-- Add highlight.js JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Add additional languages -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+
+<div style="max-width: 100vw; margin: 0; padding: 0 24px; height: 100vh;">
+  <div style="display: flex; gap: 32px; align-items: flex-start; height: 100vh;">
+    <!-- 문제 상세 좌측 -->
+    <div style="width: 40vw; min-width: 300px; height: 100vh; overflow-y: auto;">
+      <h2>{{ problem.title }}</h2>
+      <div>
+        <a href="{{ url_for('edit_problem', problem_id=problem.id) }}"><button>문제 수정</button></a>
+        <button onclick="location.href='#submit'">제출</button>
+        <button onclick="location.href='#my_subs'">내 제출</button>
+        <button onclick="location.href='{{ url_for('submissions', problem_id=problem.id) }}'">채점 현황</button>
+        <a href="{{ url_for('manage_testcases', problem_id=problem.id) }}">
+          <button>테스트케이스 관리</button>
+        </a>  
+        <form action="{{ url_for('delete_problem', problem_id=problem.id) }}"
+              method="POST"
+              style="display:inline;"
+              onsubmit="return confirm('정말 이 문제를 삭제하시겠습니까?');">
+          <button type="submit" style="background-color:red;color:white;">
+            문제 삭제
+          </button>
+        </form>
+      </div>
+      <ul>
+        <li>시간 제한: {{ problem.time_limit }}초</li>
+        <li>메모리 제한: {{ problem.memory_limit }}MB</li>
+        <li>제출: {{ total_submissions }}</li>
+        <li>정답: {{ ac_submissions }}</li>
+        <li>정답률: {{ solve_rate }}</li>
+        <li>테스트케이스 수: {{ problem.testcases.count() }}</li>
+      </ul>
+      <hr>
+      <h3>지문</h3>
+      <pre>{{ problem.description }}</pre>
+      {% if problem.input_spec %}
+        <h3>입력</h3>
+        <pre>{{ problem.input_spec }}</pre>
+      {% endif %}
+      {% if problem.output_spec %}
+        <h3>출력</h3>
+        <pre>{{ problem.output_spec }}</pre>
+      {% endif %}
+      <hr>
+      <h3>예제 입출력</h3>
+      {% if problem.sample_input %}
+        <strong>Sample Input:</strong>
+        <pre>{{ problem.sample_input }}</pre>
+      {% endif %}
+      {% if problem.sample_output %}
+        <strong>Sample Output:</strong>
+        <pre>{{ problem.sample_output }}</pre>
+      {% endif %}
+      <hr>
+      <h3 id="submit">제출창</h3>
+      <form method="post">
+        <select name="language">
+          <option value="c">C</option>
+          <option value="cpp">C++</option>
+          <option value="py">Python</option>
+        </select><br>
+        <textarea name="code" rows="10" style="width:100%;" required></textarea><br><br>
+        <button type="submit">제출</button>
+      </form>
+      <hr>
+      <h3 id="my_subs">나의 제출</h3>
+      <ul>
+        {% for s in user_submissions %}
+          <li>{{ s.submitted_at }} — {{ s.language }} — {{ s.result }}</li>
+        {% else %}
+          <li>아직 제출 내역이 없습니다.</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <!-- AI 코딩 선생님 우측 -->
+    <div style="width: 60vw; min-width: 400px; background: #f8f9fa; border-radius: 12px; padding: 32px; box-shadow: 0 2px 8px #0001; position: sticky; top: 0; align-self: flex-start; height: 90vh; overflow-y: hidden;">
+      <h3 style="margin-top:0; display: flex; align-items: center; gap: 12px;">
+        AI 디미 코딩 선생님
+        <button id="clear-ai-chat" type="button" style="font-size:13px; padding:4px 12px; border-radius:5px; border:1px solid #bbb; background:#fff; color:#444; cursor:pointer;">대화내용 삭제</button>
+      </h3>
+      <div id="ai-chat-window" style="height: 520px; overflow-y: auto; background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 12px; margin-bottom: 12px;"></div>
+      <form id="ai-chat-form" onsubmit="return sendAIMessage(event);" style="display: flex; gap: 8px; align-items: center;">
+        <input type="text" id="ai-user-input" placeholder="AI 디미 코딩 선생님에게 질문해보세요!" style="flex: 1; padding: 8px; border-radius: 6px; border: 1px solid #ccc;">
+        <button type="submit" style="padding: 8px 16px; border-radius: 6px; background: #007bff; color: #fff; border: none;">전송</button>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+const chatWindow = document.getElementById('ai-chat-window');
+const chatForm = document.getElementById('ai-chat-form');
+const userInput = document.getElementById('ai-user-input');
+const problemId = {{ problem.id|tojson }};
+const userId = {{ session['user_id']|tojson }};
+
+// 문제별+사용자별 대화 히스토리 key
+const chatHistoryKey = `ai_chat_history_${userId}_${problemId}`;
+
+// 대화 히스토리 배열 (role: user/assistant, content)
+let chatHistory = [];
+
+// 대화 내용 복원
+function restoreChatHistory() {
+  const saved = sessionStorage.getItem(chatHistoryKey);
+  if (saved) {
+    chatHistory = JSON.parse(saved);
+    renderChatHistory();
+  }
+}
+
+// 대화 내용 저장
+function saveChatHistory() {
+  sessionStorage.setItem(chatHistoryKey, JSON.stringify(chatHistory));
+}
+
+// 대화 내용 렌더링
+function renderChatHistory() {
+  chatWindow.innerHTML = '';
+  for (const msg of chatHistory) {
+    if (msg.role === 'user') {
+      appendMessage('나', msg.content, false);
+    } else if (msg.role === 'assistant') {
+      appendAIMessage(msg.content, false);
+    }
+  }
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+// 페이지 진입 시 대화 복원
+restoreChatHistory();
+
+async function sendAIMessage(event) {
+  event.preventDefault();
+  const message = userInput.value.trim();
+  if (!message) return false;
+
+  // 히스토리에 질문 추가
+  chatHistory.push({ role: 'user', content: message });
+  renderChatHistory();
+  saveChatHistory();
+  userInput.value = '';
+
+  // AI 응답을 위한 임시 div (말풍선 래퍼 포함)
+  const aiRow = document.createElement('div');
+  aiRow.className = 'chat-row ai-row';
+  const aiDiv = document.createElement('div');
+  aiDiv.className = 'chat-bubble ai-bubble';
+  aiDiv.textContent = '';
+  aiRow.appendChild(aiDiv);
+  chatWindow.appendChild(aiRow);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+  saveChatHistory();
+
+  // 실시간 스트리밍
+  let fullText = '';
+  const res = await fetch('/ai_chat_stream', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ history: chatHistory, problem_id: problemId, message })
+  });
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let done = false;
+  while (!done) {
+    const { value, done: doneReading } = await reader.read();
+    done = doneReading;
+    if (value) {
+      const chunk = decoder.decode(value);
+      fullText += chunk;
+      aiDiv.innerHTML = formatMessage(fullText);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+      saveChatHistory();
+    }
+  }
+  // 스트리밍이 끝나면 전체 답변을 파싱해서 코드/텍스트 분리
+  setTimeout(() => {
+    // 코드/텍스트 분리
+    let aiText = fullText;
+    let regex = /\[CODE_START\]([\s\S]*?)\[CODE_END\]/g;
+    let lastIndex = 0;
+    let match;
+    let html = '';
+    while ((match = regex.exec(aiText)) !== null) {
+      // 일반 텍스트 누적
+      if (match.index > lastIndex) {
+        html += formatMessage(aiText.substring(lastIndex, match.index));
+      }
+      // 코드만 추출
+      let codeOnly = match[1].trim();
+      // 마크다운 코드블록에서 줄바꿈 없는 경우 보정
+      let codeBlockMatch = codeOnly.match(/```(\w+)?\n?([\s\S]*?)```/);
+      if (!codeBlockMatch) {
+        codeBlockMatch = codeOnly.replace(/```(\w+)(?=[^\n])/, '```$1\n').match(/```(\w+)?\n([\s\S]*?)```/);
+      }
+      if (codeBlockMatch) {
+        codeOnly = codeBlockMatch[2];
+        // 코드가 한 줄로 붙어있으면, 언어별로 줄바꿈 보정
+        if (!codeOnly.includes('\n')) {
+          if (codeBlockMatch[1] && codeBlockMatch[1].toLowerCase().startsWith('py')) {
+            // 파이썬: for, if, def, class, print, input, = 등에서 줄바꿈
+            codeOnly = codeOnly
+              .replace(/:/g, ':\n')
+              .replace(/for /g, '\nfor ')
+              .replace(/if /g, '\nif ')
+              .replace(/def /g, '\ndef ')
+              .replace(/class /g, '\nclass ')
+              .replace(/print/g, '\nprint')
+              .replace(/input/g, '\ninput')
+              .replace(/=/g, '=\n')
+              .replace(/else/g, '\nelse');
+          } else {
+            // C/C++ 등 기존 보정
+            codeOnly = codeOnly
+              .replace(/;/g, ';\n')
+              .replace(/{/g, '{\n')
+              .replace(/}/g, '}\n')
+              .replace(/#include /g, '\n#include ')
+              .replace(/using /g, '\nusing ')
+              .replace(/int main/g, '\nint main');
+          }
+        }
+      }
+      html += `
+        <div class=\"code-editor\">
+          <div class=\"code-editor-header\">
+            <span class=\"code-editor-title\">Code</span>
+            <button class=\"copy-button\" onclick=\"copyCode(this)\">Copy</button>
+          </div>
+          <pre><code>${escapeHtml(codeOnly)}</code></pre>
+        </div>
+      `;
+      lastIndex = regex.lastIndex;
+    }
+    // 마지막 남은 일반 텍스트
+    if (lastIndex < aiText.length) {
+      html += formatMessage(aiText.substring(lastIndex));
+    }
+    aiDiv.innerHTML = html;
+    // 코드 하이라이트 적용
+    aiDiv.querySelectorAll('pre code').forEach((block) => {
+      hljs.highlightElement(block);
+    });
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+    // 히스토리에 답변 추가
+    chatHistory.push({ role: 'assistant', content: fullText });
+    saveChatHistory();
+  }, 100); // 약간의 딜레이로 스트림 종료 후 처리
+
+  return false;
+}
+
+function formatMessage(text) {
+  // 코드블록 감지 및 변환
+  // 1. 코드블록 먼저 변환
+  let html = text.replace(/```(\w+)?\n([\s\S]*?)```/g, function(match, language, code) {
+    const lang = language || 'plaintext';
+    // 줄바꿈은 그대로 두고, HTML escape만 적용
+    return `<pre><code class="language-${lang}">${escapeHtml(code)}</code></pre>`;
+  });
+  // 2. 코드블록이 아닌 부분의 줄바꿈은 <br>로 변환
+  // (코드블록 내부는 이미 변환됨)
+  html = html.replace(/(<pre><code[\s\S]*?<\/code><\/pre>)|([^<]+)/g, function(match, codeBlock, nonCode) {
+    if (codeBlock) return codeBlock; // 코드블록은 그대로
+    if (nonCode) return nonCode.replace(/\n/g, '<br>'); // 나머지는 <br>로 변환
+    return '';
+  });
+  return html;
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function appendMessage(sender, text, save = true) {
+  const isUser = sender === '나';
+  const row = document.createElement('div');
+  row.className = 'chat-row ' + (isUser ? 'user-row' : 'ai-row');
+  const bubble = document.createElement('div');
+  bubble.className = 'chat-bubble ' + (isUser ? 'user-bubble' : 'ai-bubble');
+  bubble.textContent = text;
+  row.appendChild(bubble);
+  chatWindow.appendChild(row);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+  if (save) saveChatHistory();
+}
+
+function appendAIMessage(text, save = true) {
+  // [CODE_START] ... [CODE_END] 파싱 및 코드에디터 변환
+  let aiText = text;
+  let regex = /\[CODE_START\]([\s\S]*?)\[CODE_END\]/g;
+  let lastIndex = 0;
+  let match;
+  let html = '';
+  while ((match = regex.exec(aiText)) !== null) {
+    if (match.index > lastIndex) {
+      html += formatMessage(aiText.substring(lastIndex, match.index));
+    }
+    let codeOnly = match[1].trim();
+    // 코드블록 줄바꿈 보정 등 기존 로직
+    let codeBlockMatch = codeOnly.match(/```(\w+)?\n?([\s\S]*?)```/);
+    if (!codeBlockMatch) {
+      codeBlockMatch = codeOnly.replace(/```(\w+)(?=[^\n])/, '```$1\n').match(/```(\w+)?\n([\s\S]*?)```/);
+    }
+    if (codeBlockMatch) {
+      codeOnly = codeBlockMatch[2];
+      if (!codeOnly.includes('\n')) {
+        if (codeBlockMatch[1] && codeBlockMatch[1].toLowerCase().startsWith('py')) {
+          codeOnly = codeOnly
+            .replace(/:/g, ':\n')
+            .replace(/for /g, '\nfor ')
+            .replace(/if /g, '\nif ')
+            .replace(/def /g, '\ndef ')
+            .replace(/class /g, '\nclass ')
+            .replace(/print/g, '\nprint')
+            .replace(/input/g, '\ninput')
+            .replace(/=/g, '=\n')
+            .replace(/else/g, '\nelse');
+        } else {
+          codeOnly = codeOnly
+            .replace(/;/g, ';\n')
+            .replace(/{/g, '{\n')
+            .replace(/}/g, '}\n')
+            .replace(/#include /g, '\n#include ')
+            .replace(/using /g, '\nusing ')
+            .replace(/int main/g, '\nint main');
+        }
+      }
+    }
+    html += `
+      <div class="code-editor">
+        <div class="code-editor-header">
+          <span class="code-editor-title">Code</span>
+          <button class="copy-button" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre><code>${escapeHtml(codeOnly)}</code></pre>
+      </div>
+    `;
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < aiText.length) {
+    html += formatMessage(aiText.substring(lastIndex));
+  }
+  const row = document.createElement('div');
+  row.className = 'chat-row ai-row';
+  const bubble = document.createElement('div');
+  bubble.className = 'chat-bubble ai-bubble';
+  bubble.innerHTML = html;
+  row.appendChild(bubble);
+  chatWindow.appendChild(row);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+  if (save) saveChatHistory();
+  // 코드 하이라이트 적용
+  bubble.querySelectorAll('pre code').forEach((block) => {
+    hljs.highlightElement(block);
+  });
+}
+
+function copyCode(button) {
+  const codeBlock = button.parentElement.nextElementSibling.querySelector('code');
+  const text = codeBlock.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    button.textContent = 'Copied!';
+    setTimeout(() => {
+      button.textContent = 'Copy';
+    }, 2000);
+  });
+}
+
+document.getElementById('clear-ai-chat').onclick = function() {
+  sessionStorage.removeItem(chatHistoryKey);
+  chatHistory = [];
+  chatWindow.innerHTML = '';
+};
+</script>
+
+<style>
+/* AI 채팅 말풍선 */
+.chat-row {
+  display: flex;
+  margin: 6px 0;
+}
+.chat-row.user-row { justify-content: flex-end; }
+.chat-row.ai-row { justify-content: flex-start; }
+
+.chat-bubble {
+  max-width: 85%;
+  padding: 8px 12px;
+  border-radius: 14px;
+  line-height: 1.5;
+  font-size: 14px;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.chat-bubble.user-bubble {
+  background: #4a90e2;
+  color: #fff;
+  border-bottom-right-radius: 3px;
+}
+
+.chat-bubble.ai-bubble {
+  background: #f1f3f6;
+  color: #222;
+  border: 1px solid #e6e8eb;
+  border-bottom-left-radius: 3px;
+}
+
+.chat-bubble.ai-bubble .code-editor {
+  margin: 10px 0 4px;
+}
+
+.code-editor {
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin: 14px 0;
+  overflow: hidden;
+  border: 1.5px solid #e0e0e0;
+  box-shadow: 0 2px 8px #0001;
+}
+
+.code-editor-header {
+  background: #f1f3f6;
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.code-editor-title {
+  color: #222;
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.copy-button {
+  background: #f1f3f6;
+  border: 1px solid #d0d0d0;
+  color: #333;
+  padding: 5px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.copy-button:hover {
+  background: #e0e0e0;
+  color: #111;
+}
+
+.code-editor pre {
+  margin: 0;
+  padding: 16px;
+  overflow-x: auto;
+  background: transparent;
+}
+
+.code-editor code {
+  font-family: 'Fira Mono', 'Consolas', 'Monaco', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #222;
+  background: transparent;
+}
+
+/* 이 페이지에서만 base.html의 컨테이너를 화면에 꽉 차게 */
+.container, .container-lg, .container-xl, .container-xxl, .container-fluid {
+  max-width: 100vw !important;
+  width: 100vw !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+</style>
+{% endblock %}

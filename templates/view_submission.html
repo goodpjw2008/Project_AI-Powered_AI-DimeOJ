@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>제출 코드 보기 (#{{ submission.id }})</h2>
+<ul>
+  <li><strong>유저:</strong>
+    <strong>
+    {% set tier = (
+      submission.user.cf_tier if submission.user.preferred_site=='cf'
+      else submission.user.ac_tier if submission.user.preferred_site=='ac'
+      else 'none'
+    ) %}
+    <a href="{{ url_for('profile', nickname=submission.user.username) }}">
+      <span class="handle-{{ tier|default('none') }}">{{ submission.user.get_username() }}</span>
+    </a>
+  </strong>
+  </li>
+  <li><strong>문제:</strong>
+    <a href="{{ url_for('problem_detail', problem_id=submission.problem_id) }}"
+       class="{{ problem_status }}">
+      {{ submission.problem_id }}
+    </a>
+  </li>
+  <li><strong>언어:</strong> {{ submission.language }}</li>
+  <li><strong>결과:</strong> {{ submission.result }}</li>
+  <li><strong>시간:</strong> {{ '%.3f'|format(submission.time_used or 0) }}초</li>
+  <li><strong>메모리:</strong> {{ submission.memory_used or '-' }}MB</li>
+  <li><strong>코드 길이:</strong> {{ submission.code_length }}자</li>
+  <li><strong>제출 시각:</strong> {{ submission.submitted_at }}</li>
+</ul>
+<hr>
+<h3>소스 코드</h3>
+<pre style="background:#f0f0f0; padding:1rem; border-radius:4px;">{{ submission.code }}</pre>
+{% endblock %}

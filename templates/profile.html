@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{{ user.get_username() }}님의 정보</h2>
+<table>
+  <tr><th>핸들</th><td>{{ user.get_username() }}</td></tr>
+  <tr><th>제출 수</th>   <td>{{ stats.total }}</td></tr>
+  <tr><th>풀이한 문제 수</th><td>{{ stats.solved }}</td></tr>
+  <tr><th class="status-AC">AC</th><td>{{ stats.AC }}</td></tr>
+  <tr><th class="status-WA">WA</th><td>{{ stats.WA }}</td></tr>
+  <tr><th class="status-CE">CE</th><td>{{ stats.CE }}</td></tr>
+  <tr><th class="status-RE">RE</th><td>{{ stats.RE }}</td></tr>
+  <tr><th class="status-TLE">TLE</th><td>{{ stats.TLE }}</td></tr>
+  <tr><th>Codeforces</th><td><strong><a href="https://codeforces.com/profile/{{ user.codeforces_handle }}" target="_blank">
+    <span class="handle-{{ user.cf_tier or 'none' }}">
+      {{ user.codeforces_handle or '미등록' }}
+    </span>
+  </a></strong>
+  </td></tr>
+  <tr><th>AtCoder</th><td><strong><a href="https://atcoder.jp/users/{{ user.atcoder_handle }}" target="_blank">
+    <span class="handle-{{ user.ac_tier or 'none' }}">
+    {{ user.atcoder_handle or '미등록' }}
+   </span>
+  </a></strong></td></tr>
+</table>
+{% endblock %}

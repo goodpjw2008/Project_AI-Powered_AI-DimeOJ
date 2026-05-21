@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>테스트케이스 관리 - {{ problem.title }}</h2>
+
+<form method="post">
+  <label>입력 데이터</label><br>
+  <textarea name="input_data" rows="5" style="width:100%;" required></textarea><br>
+  <label>출력 데이터</label><br>
+  <textarea name="output_data" rows="5" style="width:100%;" required></textarea><br>
+  <button type="submit">추가</button>
+</form>
+
+<hr>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th><th>입력</th><th>출력</th><th>삭제</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for tc in cases %}
+    <tr>
+      <td>{{ tc.id }}</td>
+      <!-- 입력 데이터 축약 -->
+      <td>
+        {% set lines = tc.input_data.split('\n') %}
+        {% if lines|length > 7 %}
+          {% for line in lines[:7] %}
+            <pre style="margin:0;">{{ line }}</pre>
+          {% endfor %}
+          <pre style="margin:0;">...</pre>
+        {% else %}
+          <pre style="margin:0;">{{ tc.input_data }}</pre>
+        {% endif %}
+      </td>
+      <!-- 출력 데이터 축약 -->
+      <td>
+        {% set lines_out = tc.output_data.split('\n') %}
+        {% if lines_out|length > 7 %}
+          {% for line in lines_out[:7] %}
+            <pre style="margin:0;">{{ line }}</pre>
+          {% endfor %}
+          <pre style="margin:0;">...</pre>
+        {% else %}
+          <pre style="margin:0;">{{ tc.output_data }}</pre>
+        {% endif %}
+      </td>
+      <td>
+        <form method="post"
+              action="{{ url_for('delete_testcase', problem_id=problem.id, tc_id=tc.id) }}"
+              style="display:inline;">
+          <button type="submit" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
+        </form>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4" style="text-align:center;">등록된 테스트케이스가 없습니다.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

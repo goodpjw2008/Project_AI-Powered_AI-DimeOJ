@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+{% set current_user_id = session.get('user_id') %}
+<div class="board-view-container">
+  <h2 class="board-title">{{ post.title }}</h2>
+  <div class="board-content-box">{{ post.content }}</div>
+  <div class="board-meta-bottom">
+    <span>작성자: <a href="{{ url_for('profile', nickname=post.user.get_username()) }}">{{ post.user.get_username() }}</a></span>
+    <span>작성일: {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+  </div>
+  <div class="board-actions-bottom">
+    <a href="{{ url_for('edit_post', post_id=post.id) }}" class="board-btn board-btn-edit">수정</a>
+    <form id="deleteForm" action="{{ url_for('delete_post', post_id=post.id) }}" method="POST" style="display:inline;">
+      <button type="submit" class="board-btn board-btn-delete">삭제</button>
+    </form>
+    <a href="{{ url_for('forum') }}" class="board-btn">목록</a>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var deleteForm = document.getElementById('deleteForm');
+    if (deleteForm) {
+      deleteForm.onsubmit = function(e) {
+        var currentUserId = {{ current_user_id|tojson }};
+        var postUserId = {{ post.user_id|tojson }};
+        if (!currentUserId || currentUserId !== postUserId) {
+          alert('삭제 권한이 없습니다.');
+          return false;
+        }
+        return confirm('정말 이 게시글을 삭제하시겠습니까?');
+      };
+    }
+  });
+</script>
+{% endblock %} 

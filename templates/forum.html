@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="forum-list-header">
+  <h2>게시판</h2>
+  <a href="{{ url_for('new_post') }}" class="forum-write-btn">글쓰기</a>
+</div>
+<table>
+  <thead>
+    <tr>
+      <th style="width:10%;text-align:center;">번호</th>
+      <th>제목</th>
+      <th style="width:15%;text-align:center;">작성자</th>
+      <th style="width:15%">작성일</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for post in posts %}
+    <tr>
+      <td style="text-align:center;">{{ loop.revindex }}</td>
+      <td><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></td>
+      <td style="text-align:center;">
+        <a href="{{ url_for('profile', nickname=post.user.get_username()) }}">
+          {% set tier = (
+            post.user.cf_tier if post.user.preferred_site=='cf'
+            else post.user.ac_tier if post.user.preferred_site=='ac'
+            else 'none'
+          ) %}
+          <span class="handle-{{ tier|default('none') }}">
+            {{ post.user.get_username() }}
+          </span>
+        </a>
+      </td>
+      <td>{{ post.created_at.strftime('%Y-%m-%d %H:%M') if post.created_at else '' }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="4" style="text-align:center;">아직 게시글이 없습니다.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if pagination is defined %}
+  {% set show_pagination = pagination.pages > 1 %}
+  {% if show_pagination %}
+  <div class="pagination">
+    {# 처음 #}
+    {% if pagination.page > 1 %}
+      <a href="{{ url_for('forum', page=1) }}">처음</a>
+    {% else %}
+      <span>처음</span>
+    {% endif %}
+
+    {# 이전 #}
+    {% if pagination.has_prev %}
+      <a href="{{ url_for('forum', page=pagination.prev_num) }}">이전</a>
+    {% else %}
+      <span>이전</span>
+    {% endif %}
+
+    {# 페이지 번호 #}
+    {% for p in range(1, pagination.pages + 1) %}
+      {% if p == pagination.page %}
+        <strong>{{ p }}</strong>
+      {% else %}
+        <a href="{{ url_for('forum', page=p) }}">{{ p }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {# 다음 #}
+    {% if pagination.has_next %}
+      <a href="{{ url_for('forum', page=pagination.next_num) }}">다음</a>
+    {% else %}
+      <span>다음</span>
+    {% endif %}
+
+    {# 마지막 #}
+    {% if pagination.page < pagination.pages %}
+      <a href="{{ url_for('forum', page=pagination.pages) }}">마지막</a>
+    {% else %}
+      <span>마지막</span>
+    {% endif %}
+  </div>
+  {% endif %}
+{% endif %}
+{% endblock %}

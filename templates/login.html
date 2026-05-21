@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>로그인</h2>
+    
+    <form method="post">
+      <label for="username">아이디</label>
+      <input type="text" id="username" name="username" required>
+      <label for="password">비밀번호</label>
+      <input type="password" id="password" name="password" required>
+      <button type="submit">로그인</button>
+    </form>
+    <div class="auth-link">
+      <span>계정이 없으신가요?</span> <a href="{{ url_for('register') }}">회원가입</a>
+    </div>
+    
+    <!-- 보안 안내사항 -->
+    <div class="security-info" style="background-color: #f8f9fa; padding: 10px; margin-top: 15px; border-radius: 4px; border-left: 4px solid #28a745;">
+      <h4 style="margin-top: 0;">보안 강화</h4>
+      <ul style="padding-left: 20px; margin-bottom: 0;">
+        <li>아이디와 비밀번호는 암호화 됩니다.</li>
+        <li>비밀번호는 8자리 이상이어야 하고 영문, 숫자, 특수문자가 포함되어야 합니다.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

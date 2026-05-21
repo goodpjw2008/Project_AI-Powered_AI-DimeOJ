@@ -1,0 +1,626 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f9f9f9;
+}
+nav {
+  background: #333;
+  color: #fff;
+  padding: 1rem;
+}
+nav a {
+  color: #fff;
+  margin-right: 1rem;
+  text-decoration: none;
+}
+.container {
+  max-width: 1400px;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.container a {
+  text-decoration: none;
+}
+.container a:hover span{
+  /* 밑줄 대신 1px 박스라인을 현재 텍스트 색상으로 */
+  border-bottom: 2px solid currentColor;
+  /* text-decoration 은 완전히 꺼두세요 */
+  text-decoration: none;
+}
+.container a:hover {
+  /* 밑줄 대신 1px 박스라인을 현재 텍스트 색상으로 */
+  border-bottom: 2px solid currentColor;
+  /* text-decoration 은 완전히 꺼두세요 */
+  text-decoration: none;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+}
+.alert {
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 0.25rem;
+}
+.alert-info    { background: #d1ecf1; color: #0c5460; }
+.alert-success { background: #d4edda; color: #155724; }
+.alert-warning { background: #fff3cd; color: #856404; }
+.alert-danger  { background: #f8d7da; color: #721c24; }
+header {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f5f5f5;
+  position: relative;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo-image {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
+  margin: 2rem 0 1.5rem 0;
+  font-size: 1rem;
+}
+.pagination a, .pagination span {
+  color: #337ab7;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.1rem 0.5rem;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+.pagination a:hover {
+  background: #eaf3fa;
+  color: #23527c;
+}
+.pagination .active, .pagination .active a {
+  color: #fff;
+  background: #337ab7;
+  font-weight: bold;
+}
+/* 제출 결과(status)별 글자색 */
+td.status-AC a { color: green;    }
+td.status-WA a { color: red;      }
+td.status-CE a { color: navy;     }
+td.status-RE a { color: purple;   }
+td.status-TLE a { color: orange;   }
+td.status-AC  { color: green;    }
+td.status-WA  { color: red;      }
+td.status-CE  { color: navy;     }
+td.status-RE  { color: purple;   }
+td.status-TLE  { color: orange;   }
+th.status-AC  { color: green;    }
+th.status-WA  { color: red;      }
+th.status-CE  { color: navy;     }
+th.status-RE  { color: purple;   }
+th.status-TLE  { color: orange;   }
+/* 문제 목록 상태별 컬러(제목 셀) */
+td.solved a { color: green; }
+td.wrong  a { color: red;   }
+td.none   a { color: black; }
+.solved { color: green; }
+.wrong  { color: red;   }
+.none   { color: black; }
+/* Codeforces */
+.handle-newbie               { color: #808080; }
+.handle-pupil                { color: #008000; }
+.handle-specialist           { color: #03a89e; }
+.handle-expert               { color: #0000ff; }
+.handle-candidate_master     { color: #aa00aa; }
+.handle-master               { color: #ff8c00; }
+.handle-international_master { color: #ff8c00; }
+.handle-grandmaster          { color: #ff0000; }
+.handle-legendary_grandmaster{ display:inline-block; color:red; }
+.handle-legendary_grandmaster::first-letter { color:black; }
+/* AtCoder (예시 색상) */
+.handle-beginner             { color: #808080; }
+.handle-brown                { color: #804000; }
+.handle-green                { color: #008000; }
+.handle-cyan                 { color: #00C0C0; }
+.handle-blue                 { color: #0000ff; }
+.handle-yellow               { color: #c0c000; }
+.handle-orange               { color: #ff8000; }
+.handle-red                  { color: #ff0000; }
+.handle-none {color:black!important;}
+.handle-None {color:black!important;}
+/* 로그인/회원가입 폼 세련된 스타일 */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+.auth-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 2.5rem 2rem 2rem 2rem;
+  min-width: 320px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.auth-card h2 {
+  margin-bottom: 1.5rem;
+  color: #2d3a4b;
+}
+.auth-card label {
+  display: block;
+  margin-bottom: 0.3rem;
+  margin-top: 1rem;
+  color: #444;
+  font-size: 1rem;
+}
+.auth-card input[type="text"],
+.auth-card input[type="password"] {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #f8fafc;
+  transition: border 0.2s;
+}
+.auth-card input:focus {
+  border: 1.5px solid #4f8cff;
+  outline: none;
+}
+.auth-card button {
+  width: 100%;
+  margin-top: 1.2rem;
+  padding: 0.8rem 0;
+  background: #4f8cff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.auth-card button:hover {
+  background: #2563eb;
+}
+.auth-link {
+  margin-top: 1.2rem;
+  font-size: 0.97rem;
+  color: #666;
+}
+.auth-link a {
+  color: #4f8cff;
+  text-decoration: none;
+  margin-left: 0.3rem;
+}
+.auth-link a:hover {
+  text-decoration: underline;
+}
+/* 문제 제작 폼 세련된 스타일 */
+.problem-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+.problem-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 2.5rem 2rem;
+  min-width: 350px;
+  max-width: 600px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.problem-card * {
+  box-sizing: border-box;
+}
+.problem-card h2 {
+  margin-bottom: 1.5rem;
+  color: #2d3a4b;
+  text-align: center;
+}
+.problem-card label {
+  display: block;
+  margin-bottom: 0.3rem;
+  margin-top: 1.1rem;
+  color: #444;
+  font-size: 1rem;
+}
+.problem-card input[type="text"],
+.problem-card input[type="number"],
+.problem-card textarea {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #f8fafc;
+  transition: border 0.2s;
+  resize: vertical;
+}
+.problem-card input:focus,
+.problem-card textarea:focus {
+  border: 1.5px solid #4f8cff;
+  outline: none;
+}
+.problem-row {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.problem-row > div {
+  flex: 1;
+}
+.problem-btn {
+  width: 100%;
+  margin-top: 1.2rem;
+  padding: 0.8rem 0;
+  background: #4f8cff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.problem-btn:hover {
+  background: #2563eb;
+}
+.header-user-menu {
+  position: absolute;
+  top: 18px;
+  right: 32px;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 1rem;
+}
+.header-user-menu a {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 0.2rem;
+  margin-right: 0.2rem;
+}
+.header-user-menu a:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
+/* 게시판(Forum) 스타일 */
+.forum-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1.2rem;
+}
+.forum-header h2 {
+  margin: 0;
+}
+.forum-write-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+.forum-write-form textarea {
+  min-width: 250px;
+  max-width: 350px;
+  min-height: 38px;
+  border-radius: 6px;
+  border: 1px solid #d0d7de;
+  padding: 0.5rem 0.8rem;
+  font-size: 1rem;
+  background: #f8fafc;
+  resize: vertical;
+}
+.forum-write-btn {
+  padding: 0.6rem 1.2rem;
+  background: #4f8cff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.forum-write-btn:hover {
+  background: #2563eb;
+}
+.forum-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.2rem;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.forum-table th, .forum-table td {
+  padding: 0.7rem 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+.forum-table th {
+  background: #f5f5f5;
+  font-weight: bold;
+  color: #333;
+}
+.forum-table tr:last-child td {
+  border-bottom: none;
+}
+.forum-delete-btn {
+  background: #ff4d4f;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.97rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.forum-delete-btn:hover {
+  background: #d32f2f;
+}
+.forum-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1.2rem;
+}
+.post-detail-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 2rem 2rem 1.5rem 2rem;
+  margin-bottom: 2rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.post-detail-card h2 {
+  margin-bottom: 0.7rem;
+}
+.post-meta {
+  color: #666;
+  font-size: 0.97rem;
+  margin-bottom: 1.2rem;
+  display: flex;
+  gap: 1.5rem;
+}
+.post-content {
+  font-size: 1.08rem;
+  margin-bottom: 1.2rem;
+  white-space: pre-line;
+}
+.comment-section {
+  max-width: 700px;
+  margin: 0 auto 2rem auto;
+  background: #fafbfc;
+  border-radius: 10px;
+  padding: 1.2rem 1.5rem 1.5rem 1.5rem;
+}
+.comment-section h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+.comment-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.2rem;
+}
+.comment-form textarea {
+  flex: 1;
+  min-height: 38px;
+  border-radius: 6px;
+  border: 1px solid #d0d7de;
+  padding: 0.5rem 0.8rem;
+  font-size: 1rem;
+  background: #f8fafc;
+  resize: vertical;
+}
+.comment-form button {
+  padding: 0.6rem 1.2rem;
+  background: #4f8cff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.comment-form button:hover {
+  background: #2563eb;
+}
+.comment-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.comment-list li {
+  background: #fff;
+  border-radius: 7px;
+  margin-bottom: 0.7rem;
+  padding: 0.7rem 1rem 0.7rem 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+.comment-meta {
+  color: #888;
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+  display: flex;
+  gap: 1.2rem;
+  align-items: center;
+}
+.comment-content {
+  font-size: 1.05rem;
+  white-space: pre-line;
+}
+.board-write-container, .board-view-container {
+  max-width: 700px;
+  margin: 2.5rem auto 2rem auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 2.5rem 2.2rem;
+}
+.board-title {
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  color: #2d3a4b;
+  font-weight: bold;
+}
+.board-write-form .form-group {
+  margin-bottom: 1.5rem;
+}
+.board-write-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #444;
+  font-size: 1.08rem;
+}
+.board-write-form input[type="text"],
+.board-write-form textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  font-size: 1.08rem;
+  background: #f8fafc;
+  transition: border 0.2s;
+  resize: vertical;
+}
+.board-write-form input:focus,
+.board-write-form textarea:focus {
+  border: 1.5px solid #4f8cff;
+  outline: none;
+}
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+}
+.board-btn {
+  padding: 0.7rem 1.5rem;
+  background: #4f8cff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.08rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+.board-btn:hover {
+  background: #2563eb;
+}
+.board-btn-cancel {
+  background: #aaa;
+}
+.board-btn-cancel:hover {
+  background: #888;
+}
+.board-btn-delete {
+  background: #ff4d4f;
+}
+.board-btn-delete:hover {
+  background: #d32f2f;
+}
+.board-view-header {
+  margin-bottom: 1.5rem;
+}
+.board-meta {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 0.7rem;
+  display: flex;
+  gap: 1.5rem;
+}
+.board-actions {
+  margin-bottom: 1.2rem;
+  display: flex;
+  gap: 0.7rem;
+}
+.board-content {
+  font-size: 1.13rem;
+  line-height: 1.7;
+  color: #222;
+  white-space: pre-line;
+  min-height: 120px;
+}
+.board-meta-bottom {
+  color: #666;
+  font-size: 1rem;
+  margin-top: 2.5rem;
+  margin-bottom: 0.7rem;
+  display: flex;
+  gap: 1.5rem;
+}
+.board-actions-bottom {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  margin-top: 1.2rem;
+}
+.board-btn-edit {
+  background: #6c757d;
+}
+.board-btn-edit:hover {
+  background: #495057;
+}
+.board-content-box {
+  background: #f6f8f9;
+  border: 1px solid #e3e6e8;
+  border-radius: 7px;
+  padding: 1.5rem 1.3rem;
+  font-size: 1.13rem;
+  line-height: 1.7;
+  color: #222;
+  min-height: 120px;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+  white-space: pre-line;
+}
+.board-write-form * {
+  box-sizing: border-box;
+}
+/* 문제 지문 스타일 - 자동 줄바꿈 */
+pre {
+  white-space: pre-wrap;       /* CSS3 */
+  word-wrap: break-word;       /* IE */
+  overflow-wrap: break-word;   /* 모던 브라우저 */
+  max-width: 100%;
+  overflow-x: auto;
+}

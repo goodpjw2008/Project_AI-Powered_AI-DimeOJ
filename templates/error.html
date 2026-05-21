@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}오류 - {{ code }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+          <h3>오류가 발생했습니다</h3>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">{{ code }} - {{ error }}</h5>
+          <p class="card-text">요청을 처리하는 중에 문제가 발생했습니다.</p>
+          <a href="{{ url_for('index') }}" class="btn btn-primary">메인 페이지로 돌아가기</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 
