@@ -1,4 +1,4 @@
-# AI-DimeOJ (Dimigo Online Judge)
+# AI-DimiOJ (Dimigo Online Judge)
 
 중고등학생을 위한 온라인 코딩 문제 해결 플랫폼. 알고리즘 문제 풀이, 자동 채점, **AI 코딩 선생님(GPT) 연동**, 게시판, 랭킹을 제공합니다.
 

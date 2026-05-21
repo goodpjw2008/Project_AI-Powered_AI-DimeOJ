@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-  <title>AI-DimeOJ</title>
+  <title>AI-DimiOJ</title>
 </head>
 <body>
   <header>
     <a href="{{ url_for('index') }}" class="logo-link">
       <img src="{{ url_for('static', filename='images/dimigo_logo.png') }}" alt="디미고 로고" class="logo-image">
-      <span class="logo-text">AI-DimeOJ</span>
+      <span class="logo-text">AI-DimiOJ</span>
     </a>
     <div class="header-user-menu">
       {% if session.get('user_id') %}

@@ -1,6 +1,6 @@
-# AI-DimeOJ (Dimigo Online Judge) 사용자 가이드
+# AI-DimiOJ (Dimigo Online Judge) 사용자 가이드
 
-**AI-DimeOJ(Dimigo Online Judge)** 사용자 가이드입니다. 회원가입부터 문제 풀이, AI 코딩 선생님 활용, 직접 문제 출제까지 단계별로 설명합니다.
+**AI-DimiOJ(Dimigo Online Judge)** 사용자 가이드입니다. 회원가입부터 문제 풀이, AI 코딩 선생님 활용, 직접 문제 출제까지 단계별로 설명합니다.
 
 ## 목차
 
